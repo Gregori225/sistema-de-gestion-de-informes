@@ -3,7 +3,7 @@ Plataforma de gestión documental que permite a usuarios con distintos cargos ge
 
 ## 🧠 Lógica de Negocio (Business Logic)
 
-El sistema opera bajo un modelo de **Control de Acceso Basado en Roles (RBAC)** y una **Máquina de Estados simplificada** que gestiona el ciclo de vida de cada informe técnico. Toda la validación de permisos y transiciones de estado se procesa estrictamente en el servidor (Backend PHP), garantizando la integridad de los datos independientemente de la interfaz de usuario.
+El sistema opera bajo un modelo de **Control de Acceso Basado en Roles (RBAC)** y una **Máquina de Estados simplificada** que gestiona el ciclo de vida de cada informe técnico. Toda la validación de permisos y transiciones de estado se procesa estrictamente en el servidor, garantizando la integridad de los datos independientemente de la interfaz de usuario.
 
 ---
 
