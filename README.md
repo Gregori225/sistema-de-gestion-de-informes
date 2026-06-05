@@ -1,39 +1,42 @@
 # sistema-de-gestion-de-informes
 Plataforma de gestión documental que permite a usuarios con distintos cargos generar informes técnicos estandarizados y enviarlos automáticamente a otros departamentos para su revisión.
 
-## 🧠 Lógica de Negocio (Business Logic)
+## ⚙️ Lógica de Trabajo del Sistema
 
-El sistema opera bajo un modelo de **Control de Acceso Basado en Roles (RBAC)** y una **Máquina de Estados simplificada** que gestiona el ciclo de vida de cada informe técnico. Toda la validación de permisos y transiciones de estado se procesa estrictamente en el servidor, garantizando la integridad de los datos independientemente de la interfaz de usuario.
+El núcleo de este sistema está diseñado para modernizar y digitalizar la gestión de TI en la institución, **sustituyendo el antiguo flujo tradicional de informes técnicos en papel impreso y llenado manual** por un ecosistema centralizado, ágil y totalmente auditable. 
 
----
-
-### 1. Roles y Permisos
-
-El acceso a las funcionalidades está ligado al rol y al departamento del usuario autenticado:
-
-*   **Rol: Técnico (Creador)**
-    *   Puede redactar, guardar y editar informes en estado `Borrador` o `Rechazado`.
-    *   Puede enviar informes dirigidos a **cualquier departamento de la empresa** (incluido su propio departamento).
-    *   **Restricción de Visibilidad:** Solo puede ver los informes que él mismo ha creado. No tiene acceso a bandejas de entrada de otros departamentos.
-    *   **Restricción de Edición:** Pierde *absolutamente todos* los permisos de edición en el momento en que el estado cambia a `Enviado` o `Aprobado`.
-
-*   **Rol: Supervisor / Jefe (Revisor)**
-    *   **Bandeja de Entrada (Gestión):** Ve todos los informes pendientes donde su departamento es el destino (`WHERE id_departamento_destino = departamento_usuario`).
-    *   **Bandeja de Salida (Auditoría):** Puede consultar en *solo lectura* los informes que los técnicos de **su propio departamento** han enviado a otras áreas (para fines de control y seguimiento).
-    *   Puede cambiar el estado de un informe recibido a `Aprobado` o `Rechazado`.
-    *   **Restricción de Integridad:** No puede modificar el contenido original (título, cuerpo, adjuntos) redactado por el técnico. Su única acción de escritura permitida es el cambio de estado y la redacción de **observaciones obligatorias** en caso de rechazo.
+El sistema rompe con el concepto del "ticket genérico" y lo reemplaza por **Informes Técnicos Dinámicos** con un flujo de validación simplificado, garantizando la eficiencia, el control institucional y la inmutabilidad de los datos una vez aprobados.
 
 ---
 
-### 2. Ciclo de Vida del Informe (Máquina de Estados)
+### 👥 1. Roles y Actores del Sistema
 
-El flujo está diseñado para ser predecible y evitar cambios de estado accidentales. Se controla mediante la columna `estado` en la base de datos:
+El sistema opera bajo un modelo de control de acceso basado en dos perfiles principales:
+
+| Rol | Departamento | Acciones Permitidas |
+| :--- | :--- | :--- |
+| **Solicitante** | Cualquier área de la institución | Seleccionar plantillas, llenar y enviar informes técnicos, y consultar el estado histórico de sus requerimientos. |
+| **Técnico** | Soporte Técnico / TI | Visualizar la bandeja de entrada, evaluar informes pendientes, registrar la solución técnica, aprobar y congelar el documento. |
+
+---
+
+### 📋 2. Motor de Plantillas Dinámicas
+
+Para erradicar los reportes incompletos o ambiguos que ocurrían en el formato de papel, el sistema utiliza formularios inteligentes basados en esquemas:
+* El sistema almacena **Tipos de Plantillas** según la naturaleza del problema (ej. *Falla de Red*, *Avería de Hardware*, *Solicitud de Software*).
+* Cada plantilla define sus propios **Campos Obligatorios** específicos (ej. Dirección IP, Código de Bien Nacional, Nombre del software).
+* La interfaz de usuario se renderiza dinámicamente leyendo este esquema, y el **Backend valida estrictamente** que todos los campos requeridos estén presentes antes de permitir el envío, obligando al solicitante a entregar datos técnicos precisos desde el primer instante.
+
+---
+
+### 🔄 3. Ciclo de Vida del Informe (Flujo de Estados)
+
+Todo informe técnico atraviesa un flujo de control estricto que asegura el orden institucional:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Borrador: Crear informe
-    Borrador --> Enviado: Técnico envía al depto. destino
-    Enviado --> Aprobado: Supervisor valida (Fin del ciclo)
-    Enviado --> Rechazado: Supervisor solicita correcciones
-    Rechazado --> Borrador: Técnico corrige y reenvía
-    Aprobado --> [*]: Documento inmutable y finalizado
+    [*] --> Pendiente: Solicitante envía el informe
+    Pendiente --> Aprobado: Técnico registra solución y valida
+    Pendiente --> Devuelto: Técnico solicita más información (Opcional)
+    Devuelto --> Pendiente: Solicante corrige y reenvía
+    Aprobado --> [*]: Documento congelado e inmutable
