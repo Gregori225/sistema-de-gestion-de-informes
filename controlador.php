@@ -1,5 +1,5 @@
 <?php
-session_start(); // Habilitamos el uso de sesiones al procesar el formulario
+session_start();
 
 if (isset($_POST["btningresar"])) {
     if (!empty($_POST["usuario"]) && !empty($_POST["contrasena"])) {
@@ -7,8 +7,10 @@ if (isset($_POST["btningresar"])) {
         $usuario = $_POST["usuario"];
         $contrasena = $_POST["contrasena"];
 
-        // Consultamos a la base de datos PostgreSQL
-        $sql = pg_query($conexion, "SELECT * FROM usuarios WHERE usuario='$usuario' AND contrasena='$contrasena'");
+        // 1. Usamos parámetros ($1, $2) para evitar SQL Injection
+        // 2. Agregamos "AND activo = TRUE" para el Soft Delete
+        $query = "SELECT * FROM usuarios WHERE usuario = $1 AND contrasena = $2 AND activo = TRUE";
+        $sql = pg_query_params($conexion, $query, array($usuario, $contrasena));
 
         if ($datos = pg_fetch_object($sql)) {
 
@@ -18,13 +20,13 @@ if (isset($_POST["btningresar"])) {
             $_SESSION["nombre"] = $datos->nombre;
             $_SESSION["rol"] = $datos->rol;
             $_SESSION["cargo"] = $datos->cargo;
-            $_SESSION["id_departamento"] = $datos->id_departamento; // <-- Añadido el elemento faltante de la tabla
+            $_SESSION["id_departamento"] = $datos->id_departamento;
 
             // Redirección limpia mediante JavaScript
             echo "<script>window.location.href = 'dashboard.php';</script>";
             exit();
         } else {
-            echo "<div class='alert alert-danger text-center mb-3'>Acceso denegado</div>";
+            echo "<div class='alert alert-danger text-center mb-3'>Acceso denegado o usuario inactivo</div>";
         }
     } else {
         echo "<div class='alert alert-danger text-center mb-3'>Por favor, completa todos los campos</div>";

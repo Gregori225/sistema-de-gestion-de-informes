@@ -1,0 +1,48 @@
+/* css/dashboard.css */
+:root {
+  --primary-green: #00a859;
+  --dark-blue: #1e293b;
+}
+
+body {
+  background-color: #f1f5f9;
+}
+
+.sidebar {
+  min-height: 100vh;
+  background-color: var(--dark-blue);
+  color: white;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  transition: 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.main-content {
+  padding: 2rem;
+}
+
+.card-stat {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-logout {
+  background-color: var(--primary-green);
+  border: none;
+  color: white;
+}
+
+.btn-logout:hover {
+  background-color: #008a4a;
+  color: white;
+}
