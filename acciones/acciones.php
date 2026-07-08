@@ -5,23 +5,24 @@ error_reporting(E_ALL);
 */
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include("./models/conexion_bd.php");
+    require_once("../config/config.php");
 
     // Capturamos los campos reales de tu tabla public.usuarios
     $usuario         = trim($_POST['usuario']);
+    // Contraseña en texto plano (sin hash)
     $contrasena      = trim($_POST['contrasena']);
     $nombre          = trim($_POST['nombre']);
-    $rol             = trim($_POST['rol']); // Debe coincidir con los valores de tu tipo 'rol_usuario'
+    $rol             = trim($_POST['rol']); 
     $cargo           = trim($_POST['cargo']);
-    $id_departamento = intval($_POST['id_departamento']); // Lo forzamos a entero (bigint)
+    $id_departamento = intval($_POST['id_departamento']); 
 
     // Consulta adaptada a tu esquema de PostgreSQL
-    $sql = "INSERT INTO public.usuarios (usuario, contrasena, nombre, rol, cargo, id_departamento) 
-            VALUES (:usuario, :contrasena, :nombre, :rol, :cargo, :id_departamento)";
+    $sql = "INSERT INTO public.usuarios (usuario, contrasena_hash, nombre, rol, cargo, id_departamento) 
+            VALUES (:usuario, :contrasena_hash, :nombre, :rol, :cargo, :id_departamento)";
 
-    $stmt = $conexionPDO->prepare($sql);
+    $stmt = $conexion->prepare($sql);
     $stmt->bindParam(':usuario', $usuario);
-    $stmt->bindParam(':contrasena', $contrasena);
+    $stmt->bindParam(':contrasena_hash', $contrasena);
     $stmt->bindParam(':nombre', $nombre);
     $stmt->bindParam(':rol', $rol);
     $stmt->bindParam(':cargo', $cargo);
@@ -29,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {
         header("location:../");
-        exit; // Buena práctica para detener la ejecución tras un redireccionamiento
+        exit;
     } else {
         echo "Error al crear el registro: " . implode(", ", $stmt->errorInfo());
     }

@@ -2,7 +2,7 @@
 // acciones/detallesUsuario.php
 
 // 1. Incluimos la conexión a la base de datos
-include_once("../models/conexion_bd.php");
+require_once("../config/config.php");
 
 // Verificamos que el ID venga por la URL y sea un número válido
 $idUsuario = isset($_GET['id']) ? intval($_GET['id']) : null;
@@ -20,7 +20,7 @@ try {
             WHERE id = :id 
             LIMIT 1";
 
-    $stmt = $conexionPDO->prepare($sql);
+    $stmt = $conexion->prepare($sql);
     $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
     $stmt->execute();
 

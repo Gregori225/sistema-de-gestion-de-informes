@@ -1,5 +1,5 @@
 <?php
-include("../config/config.php");
+require_once("../config/config.php");
 
 // Validación robusta del ID
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

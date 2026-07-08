@@ -1,3 +1,23 @@
+<?php
+session_start();
+
+// SEGURIDAD: Verificar sesión activa
+if (empty($_SESSION["id"])) {
+  header("location: login.php");
+  exit();
+}
+
+require_once("config/config.php");
+include("acciones/acciones.php");
+
+// Módulo de Usuarios 
+$usuarios = obtenerUsuarios($conexion);
+$totalUsuarios = $usuarios->rowCount();
+
+// Departamentos
+$departamentos = obtenerDepartamentos($conexion);
+$totalDepartamentos = $departamentos->rowCount();
+?>
 <!doctype html>
 <html lang="es">
 
@@ -7,106 +27,101 @@
   <title>CRUD de Usuarios en PHP, PostgreSQL utilizando MODALES</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./css/home.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
 <body>
-  <?php
-  // Asegúrate de que config.php tenga tu conexión PDO a Postgres que reparamos antes
-  include("models/conexion_bd.php");
-  include("acciones/acciones.php");
+  <!-- Contenedor principal usando Flexbox para separar el Sidebar del Contenido -->
+  <div class="d-flex min-vh-100">
 
-  // Módulo de Usuarios 
-  $usuarios = obtenerUsuarios($conexionPDO);
-  $totalUsuarios = $usuarios->rowCount();
+    <!-- 🗂️ MENÚ LATERAL (SIDEBAR) -->
+    <!-- Se eliminan las clases 'col-md-3' para que el CSS del sidebar controle su propio ancho -->
+    <?php include("includes/sidebar.php"); ?>
 
-  // Departamentos
-  $departamentos = obtenerDepartamentos($conexionPDO);
-  $totalDepartamentos = $departamentos->rowCount();
-  ?>
+    <!-- 📝 CONTENIDO PRINCIPAL DEL PANEL -->
+    <!-- flex-grow-1 hace que este bloque ocupe todo el espacio restante -->
+    <main class="flex-grow-1 px-4 py-5" style="overflow-x: hidden;">
 
-  <h1 class="text-center mt-5 mb-2 fw-bold">CRUD completo de Usuarios con PHP, PostgreSQL y Bootstrap 5</h1>
+      <!-- Título Principal alineado al contenido -->
+      <h1 class="text-center mb-5 fw-bold h2 text-dark">CRUD completo de Usuarios con PHP, PostgreSQL y Bootstrap 5</h1>
 
-  <main class="container my-5">
-    <div class="row justify-content-center">
-      <div class="col-xl-10">
-
-        <!-- 👥 SECCIÓN DE USUARIOS -->
-        <section id="modulo-usuarios" class="mb-5" aria-labelledby="titulo-usuarios">
-          <header class="d-flex justify-content-between align-items-center mb-4">
-            <h1 id="titulo-usuarios" class="h2 mb-0 text-dark">
-              Lista de Usuarios <span class="badge bg-secondary fs-6"><?php echo $totalUsuarios; ?></span>
-            </h1>
-            <div class="header-actions">
-              <button onclick="modalRegistrarEmpleado()" class="btn btn-success me-2" title="Registrar Nuevo Usuario">
-                <i class="bi bi-person-plus"></i> <span class="d-none d-sm-inline">Nuevo Usuario</span>
-              </button>
-              <a href="acciones/exportar.php" class="btn btn-outline-success" title="Exportar a CSV">
-                <i class="bi bi-filetype-csv"></i>
-              </a>
-            </div>
-          </header>
-
-          <!-- Filtro de Búsqueda -->
-          <div class="row mb-3 justify-content-end">
-            <div class="col-md-5 col-lg-4">
-              <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" id="inputBuscar" class="form-control" placeholder="Buscar usuarios...">
-              </div>
-            </div>
-          </div>
-
-          <!-- Contenedor con Scroll de Usuarios -->
-          <div class="table-responsive bg-white border rounded shadow-sm" style="max-height: 380px; overflow-y: auto;">
-            <?php include("models/usuarios.php"); ?>
-          </div>
-        </section>
-
-        <!-- ↕️ SEPARADOR VISUAL -->
-        <hr class="my-5" style="border-top: 2px dashed #dee2e6;">
-
-        <!-- 🏢 SECCIÓN DE DEPARTAMENTOS -->
-        <section id="modulo-departamentos" class="mb-4" aria-labelledby="titulo-departamentos">
-          <header class="d-flex justify-content-between align-items-center mb-4">
-            <h2 id="titulo-departamentos" class="h3 mb-0 text-dark">
-              Lista de Departamentos <span class="badge bg-primary fs-6"><?php echo $totalDepartamentos; ?></span>
-            </h2>
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDepartamentoModal" title="Registrar Nuevo Departamento">
-              <i class="bi bi-folder-plus"></i> <span class="d-none d-sm-inline">Nuevo Departamento</span>
+      <!-- 👥 SECCIÓN DE USUARIOS -->
+      <section id="modulo-usuarios" class="mb-5" aria-labelledby="titulo-usuarios">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+          <h1 id="titulo-usuarios" class="h2 mb-0 text-dark">
+            Lista de Usuarios <span class="badge bg-secondary fs-6"><?php echo $totalUsuarios; ?></span>
+          </h1>
+          <div class="header-actions">
+            <button onclick="modalRegistrarEmpleado()" class="btn btn-success me-2" title="Registrar Nuevo Usuario">
+              <i class="bi bi-person-plus"></i> <span class="d-none d-sm-inline">Nuevo Usuario</span>
             </button>
-          </header>
-
-          <!-- Contenedor con Scroll de Departamentos -->
-          <div class="table-responsive bg-white border rounded shadow-sm" style="max-height: 280px; overflow-y: auto;">
-            <table class="table table-hover align-middle mb-0" id="tablaDepartamentos">
-              <thead class="table-light style-sticky-top" style="position: sticky; top: 0; z-index: 2;">
-                <tr>
-                  <th scope="col" style="width: 15%;">ID</th>
-                  <th scope="col" style="width: 65%;">Nombre del Departamento</th>
-                  <th scope="col" style="width: 20%;" class="text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php foreach ($departamentos as $dep): ?>
-                  <tr id="dep-<?php echo $dep['id']; ?>">
-                    <td><strong><?php echo $dep['id']; ?></strong></td>
-                    <td><?php echo htmlspecialchars($dep['nombre']); ?></td>
-                    <td class="text-center">
-                      <button class="btn btn-outline-danger btn-sm" onclick="eliminarDepartamento(<?php echo $dep['id']; ?>)" title="Eliminar Departamento">
-                        <i class="bi bi-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
+            <a href="acciones/exportar.php" class="btn btn-outline-success" title="Exportar a CSV">
+              <i class="bi bi-filetype-csv"></i>
+            </a>
           </div>
-        </section>
+        </header>
 
-      </div>
-    </div>
-  </main>
+        <!-- Filtro de Búsqueda -->
+        <div class="row mb-3 justify-content-end">
+          <div class="col-md-5 col-lg-4">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+              <input type="text" id="inputBuscar" class="form-control" placeholder="Buscar usuarios...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenedor con Scroll de Usuarios -->
+        <div class="table-responsive bg-white border rounded shadow-sm" style="max-height: 380px; overflow-y: auto;">
+          <?php include("models/usuarios.php"); ?>
+        </div>
+      </section>
+
+      <!-- ↕️ SEPARADOR VISUAL -->
+      <hr class="my-5" style="border-top: 2px dashed #dee2e6;">
+
+      <!-- 🏢 SECCIÓN DE DEPARTAMENTOS -->
+      <section id="modulo-departamentos" class="mb-4" aria-labelledby="titulo-departamentos">
+        <header class="d-flex justify-content-between align-items-center mb-4">
+          <h2 id="titulo-departamentos" class="h3 mb-0 text-dark">
+            Lista de Departamentos <span class="badge bg-primary fs-6"><?php echo $totalDepartamentos; ?></span>
+          </h2>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDepartamentoModal" title="Registrar Nuevo Departamento">
+            <i class="bi bi-folder-plus"></i> <span class="d-none d-sm-inline">Nuevo Departamento</span>
+          </button>
+        </header>
+
+        <!-- Contenedor con Scroll de Departamentos -->
+        <div class="table-responsive bg-white border rounded shadow-sm" style="max-height: 280px; overflow-y: auto;">
+          <table class="table table-hover align-middle mb-0" id="tablaDepartamentos">
+            <thead class="table-light sticky-top" style="z-index: 2;">
+              <tr>
+                <th scope="col" style="width: 15%;">ID</th>
+                <th scope="col" style="width: 65%;">Nombre del Departamento</th>
+                <th scope="col" style="width: 20%;" class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($departamentos as $dep): ?>
+                <tr id="dep-<?php echo $dep['id']; ?>">
+                  <td><strong><?php echo $dep['id']; ?></strong></td>
+                  <td><?php echo htmlspecialchars($dep['nombre']); ?></td>
+                  <td class="text-center">
+                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarDepartamento(<?php echo $dep['id']; ?>)" title="Eliminar Departamento">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main> <!-- Fin main.flex-grow-1 -->
+  </div> <!-- Fin d-flex -->
 
   <!-- 🗔 MODAL SEMÁNTICO PARA AGREGAR DEPARTAMENTO -->
   <div class="modal fade" id="addDepartamentoModal" tabindex="-1" aria-labelledby="modalDepTitulo" aria-hidden="true">
