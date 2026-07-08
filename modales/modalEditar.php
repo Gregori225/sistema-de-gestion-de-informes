@@ -50,8 +50,9 @@ try {
                             <label class="form-label">Rol de Usuario</label>
                             <select name="rol" id="rol_edit" class="form-select" required>
                                 <option value="">Seleccione</option>
-                                <option value="admin">Administrador</option>
-                                <option value="user">Usuario</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Tecnico">Técnico</option>
+                                <option value="Usuario">Usuario</option>
                             </select>
                         </div>
 

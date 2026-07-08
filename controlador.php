@@ -23,7 +23,11 @@ if (isset($_POST["btningresar"])) {
 
         if ($datos = pg_fetch_object($sql)) {
             // 3. Verificar contraseña en texto plano
+<<<<<<< HEAD
             if ($contrasena === $datos->contrasena) {
+=======
+            if ($contrasena === $datos->contrasena_hash) {
+>>>>>>> b86884843f9ecf0a5a8207f5e627ccdbab1c6451
 
                 // GUARDAMOS TODOS LOS ELEMENTOS DE LA TABLA EN LA SESIÓN
                 $_SESSION["id"] = $datos->id;

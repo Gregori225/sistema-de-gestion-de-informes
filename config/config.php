@@ -1,5 +1,8 @@
 <?php
+<<<<<<< HEAD
 
+=======
+>>>>>>> b86884843f9ecf0a5a8207f5e627ccdbab1c6451
 /**
  * Configuración Centralizada de la Base de Datos
  * 
@@ -20,7 +23,11 @@ try {
     $conexion = new PDO($dsn, DB_USER, DB_PASSWORD);
     $conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> b86884843f9ecf0a5a8207f5e627ccdbab1c6451
     // Configurar encoding UTF-8
     $conexion->exec("SET NAMES 'UTF8'");
 } catch (PDOException $e) {
@@ -29,10 +36,17 @@ try {
 
 // Conexión clásica pg_connect (Para compatibilidad con login.php)
 $conexion_pg = pg_connect(
+<<<<<<< HEAD
     "host=" . DB_HOST .
         " dbname=" . DB_NAME .
         " user=" . DB_USER .
         " password=" . DB_PASSWORD
+=======
+    "host=" . DB_HOST . 
+    " dbname=" . DB_NAME . 
+    " user=" . DB_USER . 
+    " password=" . DB_PASSWORD
+>>>>>>> b86884843f9ecf0a5a8207f5e627ccdbab1c6451
 );
 
 if (!$conexion_pg) {
