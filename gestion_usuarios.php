@@ -33,7 +33,6 @@ $totalDepartamentos = $departamentos->rowCount();
 </head>
 
 <body>
-<<<<<<< HEAD
   <!-- Contenedor principal usando Flexbox para separar el Sidebar del Contenido -->
   <div class="d-flex min-vh-100">
 
@@ -44,28 +43,6 @@ $totalDepartamentos = $departamentos->rowCount();
     <!-- 📝 CONTENIDO PRINCIPAL DEL PANEL -->
     <!-- flex-grow-1 hace que este bloque ocupe todo el espacio restante -->
     <main class="flex-grow-1 px-4 py-5" style="overflow-x: hidden;">
-=======
-  <?php
-  session_start();
-  
-  // SEGURIDAD: Verificar sesión activa
-  if (empty($_SESSION["id"])) {
-      header("location: login.php");
-      exit();
-  }
-  
-  require_once("config/config.php");
-  include("acciones/acciones.php");
-
-  // Módulo de Usuarios 
-  $usuarios = obtenerUsuarios($conexion);
-  $totalUsuarios = $usuarios->rowCount();
-
-  // Departamentos
-  $departamentos = obtenerDepartamentos($conexion);
-  $totalDepartamentos = $departamentos->rowCount();
-  ?>
->>>>>>> b86884843f9ecf0a5a8207f5e627ccdbab1c6451
 
       <!-- Título Principal alineado al contenido -->
       <h1 class="text-center mb-5 fw-bold h2 text-dark">CRUD completo de Usuarios con PHP, PostgreSQL y Bootstrap 5</h1>

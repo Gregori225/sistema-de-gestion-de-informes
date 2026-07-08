@@ -58,14 +58,8 @@ try {
                             <select name="rol" class="form-select" required>
                                 <option value="" selected>Seleccione</option>
                                 <!-- Valores actualizados para coincidir con el ENUM 'rol_usuario' en PostgreSQL -->
-<<<<<<< HEAD
                                 <option value="admin">Administrador</option>
                                 <option value="user">Usuario</option>
-=======
-                                <option value="Administrador">Administrador</option>
-                                <option value="Tecnico">Técnico</option>
-                                <option value="Usuario">Usuario</option>
->>>>>>> b86884843f9ecf0a5a8207f5e627ccdbab1c6451
                             </select>
                         </div>
                         <!-- Campo: Cargo -->
