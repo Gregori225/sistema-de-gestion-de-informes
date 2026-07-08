@@ -9,8 +9,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Capturamos los campos reales de tu tabla public.usuarios
     $usuario         = trim($_POST['usuario']);
-    // Hash de contraseña seguro con password_hash()
-    $contrasena      = password_hash(trim($_POST['contrasena']), PASSWORD_DEFAULT);
+    // Contraseña en texto plano (sin hash)
+    $contrasena      = trim($_POST['contrasena']);
     $nombre          = trim($_POST['nombre']);
     $rol             = trim($_POST['rol']); 
     $cargo           = trim($_POST['cargo']);
