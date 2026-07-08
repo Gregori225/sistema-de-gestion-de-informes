@@ -1,7 +1,7 @@
 <?php
 // Incluimos la configuración para conectarnos a Postgres y traer los departamentos
 // Usamos ../ porque este archivo vive dentro de la carpeta 'modales'
-include_once("../config/config.php");
+require_once("../config/config.php");
 
 $departamentos = [];
 try {
@@ -57,10 +57,10 @@ try {
                             <label class="form-label">Rol de Usuario</label>
                             <select name="rol" class="form-select" required>
                                 <option value="" selected>Seleccione</option>
-                                <!-- ¡IMPORTANTE!: Modifica estos "value" para que coincidan EXACTAMENTE -->
-                                <!-- con los valores que configuraste en tu tipo 'rol_usuario' en Postgres -->
-                                <option value="admin">Administrador</option>
-                                <option value="user">Usuario</option>
+                                <!-- Valores actualizados para coincidir con el ENUM 'rol_usuario' en PostgreSQL -->
+                                <option value="Administrador">Administrador</option>
+                                <option value="Tecnico">Técnico</option>
+                                <option value="Usuario">Usuario</option>
                             </select>
                         </div>
                         <!-- Campo: Cargo -->

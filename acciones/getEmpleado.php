@@ -1,6 +1,6 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    include("../config/config.php");
+    require_once("../config/config.php");
 
     // Obtener el ID de usuario de la solicitud GET y asegurarse de que sea un entero
     $IdUsuario = (int)$_GET['id'];

@@ -1,11 +1,11 @@
 <?php
 // Conexión a la base de datos para cargar dinámicamente los departamentos existentes
-include_once(__DIR__ . "/../models/conexion_bd.php");
+require_once(__DIR__ . "/../config/config.php");
 
 $departamentos = [];
 try {
     $queryDep = "SELECT id, nombre FROM public.departamentos ORDER BY nombre ASC";
-    $stmtDep = $conexionPDO->query($queryDep);
+    $stmtDep = $conexion->query($queryDep);
     if ($stmtDep) {
         $departamentos = $stmtDep->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -45,13 +45,14 @@ try {
                     </div>
 
                     <div class="row mb-3">
-                        <!-- Campo: Rol (admin / user) -->
+                        <!-- Campo: Rol (Administrador / Tecnico / Usuario) -->
                         <div class="col-md-6">
                             <label class="form-label">Rol de Usuario</label>
                             <select name="rol" id="rol_edit" class="form-select" required>
                                 <option value="">Seleccione</option>
-                                <option value="admin">Administrador</option>
-                                <option value="user">Usuario</option>
+                                <option value="Administrador">Administrador</option>
+                                <option value="Tecnico">Técnico</option>
+                                <option value="Usuario">Usuario</option>
                             </select>
                         </div>
 

@@ -1,5 +1,5 @@
 <?php
-include("models/conexion_bd.php");
+require_once("config/config.php");
 ?>
 <!doctype html>
 <html lang="es">

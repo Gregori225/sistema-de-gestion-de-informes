@@ -1,6 +1,6 @@
 <?php
 // acciones/exportarCSV.php
-include("../config/config.php");
+require_once("../config/config.php");
 
 $fecha_actual = date("Y-m-d");
 $filename = "usuarios_" . $fecha_actual . ".csv";

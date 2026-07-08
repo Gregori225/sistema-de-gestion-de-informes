@@ -1,5 +1,5 @@
 <?php
-include_once("../config/config.php");
+require_once("../config/config.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
