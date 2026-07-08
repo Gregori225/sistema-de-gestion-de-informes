@@ -22,8 +22,8 @@ if (isset($_POST["btningresar"])) {
         $sql = pg_query_params($conexion_pg, $query, array($usuario));
 
         if ($datos = pg_fetch_object($sql)) {
-            // 3. Verificar contraseña con password_verify() (hash seguro)
-            if (password_verify($contrasena, $datos->contrasena_hash)) {
+            // 3. Verificar contraseña en texto plano
+            if ($contrasena === $datos->contrasena_hash) {
 
                 // GUARDAMOS TODOS LOS ELEMENTOS DE LA TABLA EN LA SESIÓN
                 $_SESSION["id"] = $datos->id;
