@@ -12,16 +12,23 @@
 
 <body>
   <?php
-  // Asegúrate de que config.php tenga tu conexión PDO a Postgres que reparamos antes
-  include("models/conexion_bd.php");
+  session_start();
+  
+  // SEGURIDAD: Verificar sesión activa
+  if (empty($_SESSION["id"])) {
+      header("location: login.php");
+      exit();
+  }
+  
+  require_once("config/config.php");
   include("acciones/acciones.php");
 
   // Módulo de Usuarios 
-  $usuarios = obtenerUsuarios($conexionPDO);
+  $usuarios = obtenerUsuarios($conexion);
   $totalUsuarios = $usuarios->rowCount();
 
   // Departamentos
-  $departamentos = obtenerDepartamentos($conexionPDO);
+  $departamentos = obtenerDepartamentos($conexion);
   $totalDepartamentos = $departamentos->rowCount();
   ?>
 

@@ -2,7 +2,7 @@
 // acciones/updateUsuario.php
 
 // 1. Incluimos la conexión a la base de datos Postgres
-include_once("../config/config.php");
+require_once("../config/config.php");
 
 // Aseguramos que solo responda a peticiones POST de tu formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

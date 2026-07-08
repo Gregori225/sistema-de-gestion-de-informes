@@ -1,6 +1,6 @@
 <?php
 // acciones/detallesUsuarioCompleto.php
-include_once("../models/conexion_bd.php");
+require_once("../config/config.php");
 
 $idUsuario = isset($_GET['id']) ? intval($_GET['id']) : null;
 
@@ -18,7 +18,7 @@ try {
             WHERE u.id = :id 
             LIMIT 1";
 
-    $stmt = $conexionPDO->prepare($sql);
+    $stmt = $conexion->prepare($sql);
     $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
     $stmt->execute();
 

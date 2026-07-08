@@ -2,7 +2,7 @@
 // acciones/delete.php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    include("../config/config.php");
+    require_once("../config/config.php");
 
     // Leemos el cuerpo de la solicitud enviado por Axios
     $json_data = file_get_contents("php://input");

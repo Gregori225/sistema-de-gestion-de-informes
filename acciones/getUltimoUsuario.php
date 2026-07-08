@@ -1,6 +1,6 @@
 <?php
 // acciones/getUltimoUsuario.php
-include("../config/config.php");
+require_once("../config/config.php");
 
 try {
     // Buscamos el último usuario registrado (LIMIT 1) con el nombre de su departamento
