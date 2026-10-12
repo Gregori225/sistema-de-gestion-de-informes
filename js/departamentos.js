@@ -16,7 +16,9 @@ function guardarDepartamento() {
   }
 
   axios
-    .post("acciones/addDepartamento.php", { nombre: nombre })
+    .post("acciones/addDepartamento.php", { nombre: nombre }, {
+      headers: { "X-CSRF-Token": window.CSRF_TOKEN || "" },
+    })
     .then((response) => {
       if (response.data.success) {
         const { id, nombre } = response.data;
