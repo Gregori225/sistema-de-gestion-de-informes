@@ -83,6 +83,8 @@ try {
                     </div>
 
                     <div class="d-grid gap-2">
+                        <!-- Token CSRF: validado por acciones/acciones.php -->
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrfToken()); ?>" />
                         <!-- Mantenemos la función registrarEmpleado(event) conectada a tu JS -->
                         <button type="submit" class="btn btn-primary btn_add" onclick="registrarEmpleado(event)">
                             Registrar nuevo usuario

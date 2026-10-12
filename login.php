@@ -1,5 +1,6 @@
 <?php
-require_once("config/config.php");
+// Procesador de autenticación: define $error si el inicio de sesión falla.
+include("controlador.php");
 ?>
 <!doctype html>
 <html lang="es">
@@ -28,9 +29,11 @@ require_once("config/config.php");
     <div class="container">
       <h1>Iniciar Sesión</h1>
       <div class="container_text1"></div>
-      <form action="" method="POST">
+      <form action="" method="POST" autocomplete="off">
 
-        <?php include("controlador.php"); ?>
+        <?php if (!empty($error)): ?>
+          <div class='alert alert-danger text-center mb-3'><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
 
         <label class="form__group form__div" for="usuario">
           <span><i class="fa-solid fa-user"></i></span>
@@ -63,7 +66,6 @@ require_once("config/config.php");
       </form>
     </div>
   </div>
-  <script src="js/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 

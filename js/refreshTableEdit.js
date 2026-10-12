@@ -2,7 +2,7 @@
 window.actualizarUsuarioEdit = async function (idUsuario) {
   try {
     const response = await axios.get(
-      `acciones/getEmpleado.php?id=${idUsuario}`
+      `acciones/detallesUsuarioCompleto.php?id=${idUsuario}`
     );
     if (response.status === 200) {
       const infoUsuario = response.data; // Obtener los datos del usuario desde la respuesta
