@@ -1,0 +1,30 @@
+/* Quita la línea inferior por defecto de Bootstrap nav-tabs */
+.custom-tabs.nav-tabs {
+  border-bottom: none;
+}
+
+/* Pestaña inactiva (Corrige el texto blanco/invisible) */
+.custom-tabs .nav-link {
+  color: #6c757d !important; /* Texto gris visible */
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 8px 18px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover en pestaña inactiva */
+.custom-tabs .nav-link:hover {
+  color: #0d6efd !important;
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Pestaña activa (Resaltada como botón/tarjeta) */
+.custom-tabs .nav-link.active {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  font-weight: 600;
+}
