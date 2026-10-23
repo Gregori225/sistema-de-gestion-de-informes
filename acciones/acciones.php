@@ -9,32 +9,9 @@
 require_once __DIR__ . '/../includes/auth.php';
 require_once(__DIR__ . "/../config/config.php");
 
-/**
- * Devuelve (y crea si no existe) el token CSRF de la sesión actual.
- */
-function csrfToken(): string
-{
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
-}
-
-/* ---------------------------------------------------------------------------
- * Protección CSRF para los endpoints POST de este archivo.
- * ------------------------------------------------------------------------- */
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     requerirSesion();
 
-    $token = $_POST['csrf_token'] ?? '';
-    if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
-        http_response_code(403);
-        echo json_encode(["success" => false, "message" => "Token CSRF inválido o ausente."]);
-        exit;
-    }
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Capturamos los campos reales de la tabla public.usuarios
     $usuario         = trim($_POST['usuario'] ?? '');
     $contrasena      = trim($_POST['contrasena'] ?? '');
