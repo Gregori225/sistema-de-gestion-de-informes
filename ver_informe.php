@@ -204,31 +204,31 @@ $fecha_formateada = !empty($informe['fecha']) ? date('d/m/Y', strtotime($informe
     <!-- BARRA DE ACCIONES Y SELECTOR DE ESTADO (NO SE IMPRIME) -->
     <div class="container no-print mb-4" style="max-width: 800px;">
         <?php if ($rol === 'admin'): ?>
-        <div class="row align-items-center bg-white p-3 rounded shadow-sm border mb-3">
-            <div class="col-md-4 fw-bold text-secondary">
-                <i class="fa-solid fa-sliders me-1"></i> Estado del Informe:
+            <div class="row align-items-center bg-white p-3 rounded shadow-sm border mb-3">
+                <div class="col-md-4 fw-bold text-secondary">
+                    <i class="fa-solid fa-sliders me-1"></i> Estado del Informe:
+                </div>
+                <div class="col-md-5">
+                    <select id="select-estado" class="form-select form-select-sm">
+                        <option value="Pendiente" <?= $informe['estado'] === 'Pendiente' ? 'selected' : '' ?>>Pendiente</option>
+                        <option value="Leido" <?= $informe['estado'] === 'Leido' ? 'selected' : '' ?>>Leído</option>
+                        <option value="En Proceso" <?= $informe['estado'] === 'En Proceso' ? 'selected' : '' ?>>En Proceso</option>
+                        <option value="Resuelto" <?= $informe['estado'] === 'Resuelto' ? 'selected' : '' ?>>Resuelto</option>
+                        <option value="Cancelado" <?= $informe['estado'] === 'Cancelado' ? 'selected' : '' ?>>Cancelado</option>
+                    </select>
+                </div>
+                <div class="col-md-3 text-end mt-2 mt-md-0">
+                    <button type="button" onclick="actualizarEstado(<?= intval($informe['id']) ?>)" class="btn btn-sm btn-primary w-100">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> Actualizar
+                    </button>
+                </div>
             </div>
-            <div class="col-md-5">
-                <select id="select-estado" class="form-select form-select-sm">
-                    <option value="Pendiente" <?= $informe['estado'] === 'Pendiente' ? 'selected' : '' ?>>Pendiente</option>
-                    <option value="Leido" <?= $informe['estado'] === 'Leido' ? 'selected' : '' ?>>Leído</option>
-                    <option value="En Proceso" <?= $informe['estado'] === 'En Proceso' ? 'selected' : '' ?>>En Proceso</option>
-                    <option value="Resuelto" <?= $informe['estado'] === 'Resuelto' ? 'selected' : '' ?>>Resuelto</option>
-                    <option value="Cancelado" <?= $informe['estado'] === 'Cancelado' ? 'selected' : '' ?>>Cancelado</option>
-                </select>
-            </div>
-            <div class="col-md-3 text-end mt-2 mt-md-0">
-                <button type="button" onclick="actualizarEstado(<?= intval($informe['id']) ?>)" class="btn btn-sm btn-primary w-100">
-                    <i class="fa-solid fa-floppy-disk me-1"></i> Actualizar
-                </button>
-            </div>
-        </div>
         <?php else: ?>
-        <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm border mb-3">
-            <span class="fw-bold text-secondary me-2"><i class="fa-solid fa-sliders me-1"></i> Estado del Informe:</span>
-            <span class="badge bg-secondary"><?= htmlspecialchars((string)$informe['estado']) ?></span>
-            <span class="text-muted small ms-3">(Solo los administradores pueden modificar el estado)</span>
-        </div>
+            <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm border mb-3">
+                <span class="fw-bold text-secondary me-2"><i class="fa-solid fa-sliders me-1"></i> Estado del Informe:</span>
+                <span class="badge bg-secondary"><?= htmlspecialchars((string)$informe['estado']) ?></span>
+
+            </div>
         <?php endif; ?>
 
         <div class="text-end">
