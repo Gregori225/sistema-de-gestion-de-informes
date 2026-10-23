@@ -13,12 +13,6 @@ $user_id = $_SESSION["id"];
 $rol = $_SESSION["rol"] ?? 'invitado';
 
 try {
-    $sql_update = "UPDATE public.informes_tecnicos 
-                   SET estado = 'Leido' 
-                   WHERE id = :id AND id_solicitante = :user_id AND estado = 'Pendiente'";
-    $stmt_up = $conexion->prepare($sql_update);
-    $stmt_up->execute([':id' => $id_informe, ':user_id' => $user_id]);
-
     $sql = "SELECT i.*, 
                    u_dest.nombre AS para_nombre, u_dest.cargo AS para_cargo, d_dest.nombre AS para_depto,
                    u_rem.nombre AS de_nombre, u_rem.cargo AS de_cargo, d_rem.nombre AS de_depto
@@ -36,8 +30,37 @@ try {
     if (!$informe) {
         die("<div class='container mt-5 alert alert-danger'>El informe solicitado no existe.</div>");
     }
+
+    // SEGURIDAD: solo los participantes del informe (solicitante o técnico)
+    // pueden verlo; los administradores tienen acceso total.
+    $es_participante = ($rol === 'admin')
+        || intval($informe['id_solicitante']) === intval($user_id)
+        || intval($informe['id_tecnico']) === intval($user_id);
+
+    if (!$es_participante) {
+        http_response_code(403);
+        die("<div class='container mt-5 alert alert-danger'>Acceso denegado: no tienes permisos para ver este informe.</div>");
+    }
+
+    // Marcado automático como "Leido": lo realiza el SOLICITANTE al abrir su
+    // informe (antes la condición exigía id_solicitante = usuario pero el
+    // marcado debía ocurrir cuando el solicitante lo abría con estado
+    // 'Pendiente', lo cual ya es correcto aquí porque se comprueba tras
+    // verificar la participación).
+    if ($rol !== 'admin'
+        && intval($informe['id_solicitante']) === intval($user_id)
+        && $informe['estado'] === 'Pendiente') {
+        $stmt_up = $conexion->prepare(
+            "UPDATE public.informes_tecnicos
+             SET estado = 'Leido', fecha_actualizacion = now()
+             WHERE id = :id AND estado = 'Pendiente'"
+        );
+        $stmt_up->execute([':id' => $id_informe]);
+        $informe['estado'] = 'Leido';
+    }
 } catch (PDOException $e) {
-    die("<div class='container mt-5 alert alert-danger'>Error al consultar el informe: " . htmlspecialchars($e->getMessage()) . "</div>");
+    error_log('ver_informe.php: ' . $e->getMessage());
+    die("<div class='container mt-5 alert alert-danger'>Error al consultar el informe.</div>");
 }
 
 $fecha_formateada = !empty($informe['fecha']) ? date('d/m/Y', strtotime($informe['fecha'])) : 'N/A';

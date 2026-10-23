@@ -1,6 +1,12 @@
 <?php
 // acciones/getUltimoUsuario.php
-require_once("../config/config.php");
+require_once __DIR__ . '/../includes/auth.php';
+
+// SEGURIDAD: requiere sesión activa y rol de administrador (solo la pantalla
+// de gestión de usuarios consume este endpoint)
+requerirRol('admin');
+
+require_once(__DIR__ . "/../config/config.php");
 
 try {
     // Buscamos el último usuario registrado (LIMIT 1) con el nombre de su departamento
@@ -17,6 +23,8 @@ try {
     header('Content-Type: application/json');
     echo json_encode($usuario);
 } catch (PDOException $e) {
+    error_log('getUltimoUsuario.php: ' . $e->getMessage());
     header('HTTP/1.1 500 Internal Server Error');
-    echo json_encode(["error" => $e->getMessage()]);
+    header('Content-Type: application/json');
+    echo json_encode(["error" => "Error al consultar el último usuario."]);
 }

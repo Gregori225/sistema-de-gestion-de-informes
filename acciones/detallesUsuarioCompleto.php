@@ -1,6 +1,12 @@
 <?php
 // acciones/detallesUsuarioCompleto.php
-require_once("../config/config.php");
+require_once __DIR__ . '/../includes/auth.php';
+
+// SEGURIDAD: requiere sesión activa y rol de administrador (solo la pantalla
+// de gestión de usuarios consume este endpoint)
+requerirRol('admin');
+
+require_once(__DIR__ . "/../config/config.php");
 
 $idUsuario = isset($_GET['id']) ? intval($_GET['id']) : null;
 
@@ -33,7 +39,8 @@ try {
         echo json_encode(["error" => "El usuario solicitado no existe."]);
     }
 } catch (PDOException $e) {
+    error_log('detallesUsuarioCompleto.php: ' . $e->getMessage());
     http_response_code(500);
     header('Content-Type: application/json');
-    echo json_encode(["error" => "Error de base de datos: " . $e->getMessage()]);
+    echo json_encode(["error" => "Error al consultar el usuario."]);
 }

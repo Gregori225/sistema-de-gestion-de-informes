@@ -1,8 +1,14 @@
 <?php
-// acciones/updateUsuario.php
+// acciones/actualizarUsuario.php
+
+require_once __DIR__ . '/../includes/auth.php';
+header('Content-Type: application/json');
+
+// SEGURIDAD: requiere sesión activa y rol de administrador para modificar usuarios
+requerirRol('admin');
 
 // 1. Incluimos la conexión a la base de datos Postgres
-require_once("../config/config.php");
+require_once(__DIR__ . "/../config/config.php");
 
 // Aseguramos que solo responda a peticiones POST de tu formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,6 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rol = isset($_POST['rol']) ? trim($_POST['rol']) : null;
     $cargo = isset($_POST['cargo']) ? trim($_POST['cargo']) : null;
     $id_departamento = isset($_POST['id_departamento']) ? intval($_POST['id_departamento']) : null;
+
+    // El rol debe coincidir con el ENUM 'rol_usuario' de PostgreSQL
+    $rolesValidos = ['admin', 'user'];
+    if ($rol !== null && !in_array($rol, $rolesValidos, true)) {
+        http_response_code(400);
+        echo json_encode(["status" => "error", "message" => "Rol inválido."]);
+        exit;
+    }
 
     // Postgres necesita un booleano nativo (true/false), no el string "true"/"false" de HTML
     $activo = isset($_POST['activo']) ? ($_POST['activo'] === 'true') : true;
@@ -57,13 +71,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } catch (PDOException $e) {
         // Captura errores de base de datos (Ej: si violas una restricción UNIQUE de usuario)
+        error_log('actualizarUsuario.php: ' . $e->getMessage());
         http_response_code(500);
         header('Content-Type: application/json');
-        echo json_encode(["status" => "error", "message" => "Error de base de datos: " . $e->getMessage()]);
+        echo json_encode(["status" => "error", "message" => "No se pudo actualizar el usuario. Verifique que el nombre de usuario no esté en uso."]);
     } catch (Exception $e) {
+        error_log('actualizarUsuario.php: ' . $e->getMessage());
         http_response_code(500);
         header('Content-Type: application/json');
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+        echo json_encode(["status" => "error", "message" => "No se pudo ejecutar la actualización del usuario."]);
     }
 } else {
     // Si intentan entrar directo desde la URL por GET, bloqueamos el acceso
