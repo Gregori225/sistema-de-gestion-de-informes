@@ -1,8 +1,14 @@
 <?php
 // acciones/detallesUsuario.php
 
+require_once __DIR__ . '/../includes/auth.php';
+
+// SEGURIDAD: requiere sesión activa y rol de administrador (solo la pantalla
+// de gestión de usuarios consume este endpoint)
+requerirRol('admin');
+
 // 1. Incluimos la conexión a la base de datos
-require_once("../config/config.php");
+require_once(__DIR__ . "/../config/config.php");
 
 // Verificamos que el ID venga por la URL y sea un número válido
 $idUsuario = isset($_GET['id']) ? intval($_GET['id']) : null;
@@ -39,7 +45,8 @@ try {
         echo json_encode(["error" => "Usuario no encontrado."]);
     }
 } catch (PDOException $e) {
+    error_log('detallesUsuario.php: ' . $e->getMessage());
     http_response_code(500);
     header('Content-Type: application/json');
-    echo json_encode(["error" => "Error en la base de datos: " . $e->getMessage()]);
+    echo json_encode(["error" => "Error al consultar el usuario."]);
 }
