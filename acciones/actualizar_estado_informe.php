@@ -7,6 +7,13 @@ if (empty($_SESSION["id"])) {
     exit();
 }
 
+// SEGURIDAD: Solo los administradores pueden cambiar el estado de los informes
+if (($_SESSION["rol"] ?? '') !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Acceso denegado. Solo los administradores pueden cambiar el estado de los informes.']);
+    exit();
+}
+
 require_once("../config/config.php");
 
 $data = json_decode(file_get_contents("php://input"), true);
