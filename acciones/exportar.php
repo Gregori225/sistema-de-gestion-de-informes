@@ -1,5 +1,10 @@
 <?php
 // acciones/exportarCSV.php
+require_once __DIR__ . '/../includes/auth.php';
+
+// SEGURIDAD: requiere sesión activa y rol de administrador para exportar usuarios
+requerirRol('admin');
+
 require_once("../config/config.php");
 
 $fecha_actual = date("Y-m-d");

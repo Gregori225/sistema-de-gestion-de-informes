@@ -1,4 +1,9 @@
 <?php
+require_once __DIR__ . '/../includes/auth.php';
+
+// SEGURIDAD: requiere sesión activa y rol de administrador para eliminar departamentos
+requerirRol('admin');
+
 require_once("../config/config.php");
 
 // Validación robusta del ID
