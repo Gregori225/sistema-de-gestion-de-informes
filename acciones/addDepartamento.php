@@ -15,14 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Verificación CSRF (la página que inicia la petición provee el token en la cabecera)
-$token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
-    http_response_code(403);
-    echo json_encode(["error" => "Token CSRF inválido o ausente."]);
-    exit;
-}
-
 require_once("../config/config.php");
 
 $data   = json_decode(file_get_contents("php://input"), true);
