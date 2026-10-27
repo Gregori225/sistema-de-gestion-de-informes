@@ -30,21 +30,21 @@ function obtenerBadgeEstado($estado)
 }
 
 try {
-  // 1. INFORMES RECIBIDOS (Donde el usuario logueado es el DESTINATARIO / PARA)
+  // 1. INFORMES RECIBIDOS (Donde el usuario logueado es el TÉCNICO / RECEPTOR)
   $sql_recibidos = "SELECT i.*, u.nombre AS remitente_nombre, u.cargo AS remitente_cargo
                     FROM public.informes_tecnicos i
-                    LEFT JOIN public.usuarios u ON i.id_tecnico = u.id
-                    WHERE i.id_solicitante = :user_id
+                    LEFT JOIN public.usuarios u ON i.id_solicitante = u.id
+                    WHERE i.id_tecnico = :user_id
                     ORDER BY i.fecha DESC";
   $stmt_recibidos = $conexion->prepare($sql_recibidos);
   $stmt_recibidos->execute([':user_id' => $user_id]);
   $recibidos = $stmt_recibidos->fetchAll(PDO::FETCH_ASSOC);
 
-  // 2. INFORMES ENVIADOS (Donde el usuario logueado es el REMITENTE / DE)
+  // 2. INFORMES ENVIADOS (Donde el usuario logueado es el SOLICITANTE / REMITENTE)
   $sql_enviados = "SELECT i.*, u.nombre AS destinatario_nombre, u.cargo AS destinatario_cargo
                    FROM public.informes_tecnicos i
-                   LEFT JOIN public.usuarios u ON i.id_solicitante = u.id
-                   WHERE i.id_tecnico = :user_id
+                   LEFT JOIN public.usuarios u ON i.id_tecnico = u.id
+                   WHERE i.id_solicitante = :user_id
                    ORDER BY i.fecha DESC";
   $stmt_enviados = $conexion->prepare($sql_enviados);
   $stmt_enviados->execute([':user_id' => $user_id]);

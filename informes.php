@@ -162,13 +162,14 @@ foreach ($lista_usuarios as $u) {
         }
 
         async function enviarInforme() {
-            const idSolicitante = document.getElementById('select-para').value;
+            // CORREGIDO: Capturamos el id del destinatario como id_tecnico
+            const idTecnico = document.getElementById('select-para').value;
             const descEquipo = document.getElementById('in-desc').value.trim();
             const diagProblema = document.getElementById('in-diag').value.trim();
             const observacion = document.getElementById('in-obs').value.trim();
 
             // Validaciones con SweetAlert2
-            if (!idSolicitante) {
+            if (!idTecnico) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Campo requerido',
@@ -195,15 +196,17 @@ foreach ($lista_usuarios as $u) {
             btn.disabled = true;
             btnText.innerText = 'Enviando...';
 
+            // CORREGIDO: Enviamos id_tecnico al backend
             const datos = {
-                id_solicitante: idSolicitante,
+                id_tecnico: idTecnico,
                 descripcion_equipo: descEquipo,
                 diagnostico_problema: diagProblema,
                 observacion: observacion
             };
 
             try {
-                const response = await fetch('guardar_informe.php', {
+                // CORREGIDO: Ruta correcta apuntando a la carpeta acciones/
+                const response = await fetch('acciones/guardar_informe.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -217,7 +220,7 @@ foreach ($lista_usuarios as $u) {
                     Swal.fire({
                         icon: 'success',
                         title: '¡Enviado!',
-                        text: 'El informe se ha enviado exitosamente.',
+                        text: 'El informe se ha enviado exitosamente y se generó la notificación.',
                         confirmButtonColor: '#198754'
                     }).then(() => {
                         // Limpiar campos para un nuevo informe

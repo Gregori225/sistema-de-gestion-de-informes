@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Controlador de autenticación (login).
  *

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "config/config.php";
+require_once("../config/config.php");
 
 if (empty($_SESSION["id"])) {
     echo json_encode(['status' => 'error', 'message' => 'No autorizado']);
@@ -19,8 +19,8 @@ if ($data) {
 
         $stmt = $conexion->prepare($sql);
         $stmt->execute([
-            ':id_solicitante' => intval($data['id_solicitante']),
-            ':id_tecnico'     => intval($_SESSION["id"]),
+            ':id_solicitante' => intval($_SESSION["id"]), // El solicitante es el usuario logueado actualmente
+            ':id_tecnico'     => intval($data['id_tecnico']), // El receptor/técnico seleccionado en el formulario
             ':descripcion'    => $data['descripcion_equipo'],
             ':diagnostico'    => $data['diagnostico_problema'],
             ':observacion'    => $data['observacion']
