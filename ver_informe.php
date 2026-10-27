@@ -42,21 +42,19 @@ try {
         die("<div class='container mt-5 alert alert-danger'>Acceso denegado: no tienes permisos para ver este informe.</div>");
     }
 
-    // Marcado automático como "Leido": lo realiza el SOLICITANTE al abrir su
-    // informe (antes la condición exigía id_solicitante = usuario pero el
-    // marcado debía ocurrir cuando el solicitante lo abría con estado
-    // 'Pendiente', lo cual ya es correcto aquí porque se comprueba tras
-    // verificar la participación).
-    if ($rol !== 'admin'
-        && intval($informe['id_solicitante']) === intval($user_id)
-        && $informe['estado'] === 'Pendiente') {
-        $stmt_up = $conexion->prepare(
-            "UPDATE public.informes_tecnicos
-             SET estado = 'Leido', fecha_actualizacion = now()
-             WHERE id = :id AND estado = 'Pendiente'"
-        );
-        $stmt_up->execute([':id' => $id_informe]);
-        $informe['estado'] = 'Leido';
+    // Marcado automático como "Leido": si el informe está pendiente, al abrirlo pasa a Leído automáticamente
+    if ($informe['estado'] === 'Pendiente') {
+        try {
+            $stmt_up = $conexion->prepare(
+                "UPDATE public.informes_tecnicos
+                 SET estado = 'Leido'
+                 WHERE id = :id AND estado = 'Pendiente'"
+            );
+            $stmt_up->execute([':id' => $id_informe]);
+            $informe['estado'] = 'Leido';
+        } catch (PDOException $e) {
+            error_log("Error al marcar como leído automáticamente: " . $e->getMessage());
+        }
     }
 } catch (PDOException $e) {
     error_log('ver_informe.php: ' . $e->getMessage());
