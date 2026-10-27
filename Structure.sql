@@ -11,19 +11,57 @@ CREATE TABLE IF NOT EXISTS public.departamentos
     CONSTRAINT departamentos_nombre_key UNIQUE (nombre)
 );
 
+CREATE TABLE IF NOT EXISTS public.historial_asignaciones
+(
+    id serial NOT NULL,
+    id_item integer,
+    id_usuario integer,
+    tipo_movimiento tipo_movimiento NOT NULL,
+    motivo text COLLATE pg_catalog."default",
+    fecha_movimiento timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT historial_asignaciones_pkey PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS public.informes_tecnicos
 (
     id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     fecha timestamp with time zone NOT NULL DEFAULT now(),
-    fecha_actualizacion timestamp with time zone,
-    fecha_cierre timestamp with time zone,
     id_solicitante bigint NOT NULL,
     id_tecnico bigint,
     descripcion_equipo text COLLATE pg_catalog."default" NOT NULL,
     diagnostico_problema text COLLATE pg_catalog."default",
     observacion text COLLATE pg_catalog."default",
     estado estado_informe NOT NULL DEFAULT 'Pendiente'::estado_informe,
+    fecha_recepcion timestamp without time zone,
     CONSTRAINT informes_tecnicos_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.inventario
+(
+    id serial NOT NULL,
+    codigo_patrimonial character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    nombre character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    categoria categoria_bien NOT NULL,
+    marca character varying(100) COLLATE pg_catalog."default",
+    modelo character varying(100) COLLATE pg_catalog."default",
+    serial character varying(100) COLLATE pg_catalog."default",
+    estado estado_bien DEFAULT 'Disponible'::estado_bien,
+    ubicacion_actual character varying(150) COLLATE pg_catalog."default",
+    observaciones text COLLATE pg_catalog."default",
+    fecha_registro timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT inventario_pkey PRIMARY KEY (id),
+    CONSTRAINT inventario_codigo_patrimonial_key UNIQUE (codigo_patrimonial)
+);
+
+CREATE TABLE IF NOT EXISTS public.mantenimientos_inventario
+(
+    id serial NOT NULL,
+    id_item integer,
+    id_tecnico integer,
+    tipo_mantenimiento tipo_mantenimiento NOT NULL,
+    descripcion_trabajo text COLLATE pg_catalog."default" NOT NULL,
+    fecha_mantenimiento timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT mantenimientos_inventario_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.usuarios
@@ -40,11 +78,27 @@ CREATE TABLE IF NOT EXISTS public.usuarios
     CONSTRAINT usuarios_usuario_key UNIQUE (usuario)
 );
 
+ALTER TABLE IF EXISTS public.historial_asignaciones
+    ADD CONSTRAINT historial_asignaciones_id_item_fkey FOREIGN KEY (id_item)
+    REFERENCES public.inventario (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+
+
+ALTER TABLE IF EXISTS public.historial_asignaciones
+    ADD CONSTRAINT historial_asignaciones_id_usuario_fkey FOREIGN KEY (id_usuario)
+    REFERENCES public.usuarios (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE SET NULL;
+
+
 ALTER TABLE IF EXISTS public.informes_tecnicos
     ADD CONSTRAINT informes_tecnicos_id_solicitante_fkey FOREIGN KEY (id_solicitante)
     REFERENCES public.usuarios (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS idx_informes_solicitante
+    ON public.informes_tecnicos(id_solicitante);
 
 
 ALTER TABLE IF EXISTS public.informes_tecnicos
@@ -52,6 +106,22 @@ ALTER TABLE IF EXISTS public.informes_tecnicos
     REFERENCES public.usuarios (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION;
+CREATE INDEX IF NOT EXISTS idx_informes_tecnico
+    ON public.informes_tecnicos(id_tecnico);
+
+
+ALTER TABLE IF EXISTS public.mantenimientos_inventario
+    ADD CONSTRAINT mantenimientos_inventario_id_item_fkey FOREIGN KEY (id_item)
+    REFERENCES public.inventario (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE CASCADE;
+
+
+ALTER TABLE IF EXISTS public.mantenimientos_inventario
+    ADD CONSTRAINT mantenimientos_inventario_id_tecnico_fkey FOREIGN KEY (id_tecnico)
+    REFERENCES public.usuarios (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE SET NULL;
 
 
 ALTER TABLE IF EXISTS public.usuarios
