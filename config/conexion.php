@@ -1,12 +1,8 @@
 <?php
-/**
- * Conexión única a la base de datos (PDO) con soporte para variables de entorno.
- *
- * Lee config/config.php (constantes DB_*) y expone la función conectar() que
- * devuelve una instancia PDO compartida (singleton).
- */
 
-require_once __DIR__ . '/config.php';
+/**
+ * Conexión única a la base de datos (PDO) con soporte para Neon y SSL.
+ */
 
 if (!function_exists('conectar')) {
     /**
@@ -22,15 +18,18 @@ if (!function_exists('conectar')) {
             return $pdo;
         }
 
-        // Prioridad: variables de entorno (.env / php.ini) > constantes de config.php
-        $host = getenv('DB_HOST') ?: DB_HOST;
-        $port = getenv('DB_PORT') ?: DB_PORT;
-        $name = getenv('DB_NAME') ?: DB_NAME;
-        $user = getenv('DB_USER') ?: DB_USER;
-        $pass = getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : DB_PASSWORD;
+        // Tomamos los valores definidos en config.php (o respaldos si se llama aislado)
+        $host = defined('DB_HOST') ? DB_HOST : (getenv('DB_HOST') ?: 'localhost');
+        $port = defined('DB_PORT') ? DB_PORT : (getenv('DB_PORT') ?: '5432');
+        $name = defined('DB_NAME') ? DB_NAME : (getenv('DB_NAME') ?: 'INFORMESV1');
+        $user = defined('DB_USER') ? DB_USER : (getenv('DB_USER') ?: 'postgres');
+        $pass = defined('DB_PASSWORD') ? DB_PASSWORD : '';
+        $sslmode = defined('DB_SSLMODE') ? DB_SSLMODE : 'require';
 
         try {
-            $dsn = sprintf('pgsql:host=%s;port=%s;dbname=%s', $host, $port, $name);
+            // DSN incluyendo obligatoriamente el sslmode requerido por Neon
+            $dsn = sprintf('pgsql:host=%s;port=%s;dbname=%s;sslmode=%s', $host, $port, $name, $sslmode);
+
             $pdo = new PDO($dsn, $user, $pass, [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
